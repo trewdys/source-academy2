@@ -13,7 +13,7 @@ export type Props = OwnProps & {
   initialValue: string
   isReadOnly: boolean
   setEditorValue: (value: string) => any
-  setBreakpoints: (breakpoints: any) => any
+  setBreakpoints: (breakpoints: string[]) => any
 }
 
 const mapStateToProps = (state: Shape, ownProps: OwnProps) => ({
