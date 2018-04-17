@@ -8,7 +8,9 @@ export const SET_ACTIVE_TAB = 'SET_ACTIVE_TAB'
 
 /** Editor */
 export const SET_EDITOR_VALUE = 'SET_EDITOR_VALUE'
+export const SET_BREAKPOINTS = 'SET_BREAKPOINTS'
 export const EVAL_EDITOR = 'EVAL_EDITOR'
+export const DEBUG_EDITOR = 'DEBUG_EDITOR'
 export const SAVE_EDITOR = 'SAVE_EDITOR'
 export const SAVE_EDITOR_SUCCESS = 'SAVE_EDITOR_SUCCESS'
 

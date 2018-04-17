@@ -27,6 +27,7 @@ const interpreterReducer: Reducer<InterpreterState> = (
         ...state,
         outputs: []
       }
+
     case actionTypes.CREATE_INTERPRETER_OUTPUT:
       return {
         ...state,

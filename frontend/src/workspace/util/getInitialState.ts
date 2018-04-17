@@ -5,7 +5,7 @@ import getInitialPlaygroundState from './getInitialPlaygroundState'
 
 const DEFAULT_LIBRARY = {
   title: 'source_week_3',
-  week: 3,
+  week: 10,
   externals: [],
   files: [],
   globals: []

@@ -6,7 +6,12 @@ import { takeEvery, select, call, put, take, race } from 'redux-saga/effects'
 
 import { showSuccessMessage, showWarningMessage } from '../notification'
 import { Shape } from '../shape'
-import { Context, createContext, runInContext, interrupt } from '../../toolchain'
+import {
+  Context,
+  createContext,
+  runInContext,
+  interrupt
+} from '../../toolchain'
 
 import * as actionTypes from '../actionTypes'
 import * as actions from '../actions'
@@ -35,6 +40,7 @@ function* syncURLSaga(): SagaIterator {
   yield takeEvery(
     [
       actionTypes.SET_EDITOR_VALUE,
+      actionTypes.SET_BREAKPOINTS,
       actionTypes.SET_FILENAME,
       actionTypes.SET_READ_ONLY,
       actionTypes.SET_LIBRARY
@@ -51,8 +57,27 @@ async function postComment(content: string, codeID: string) {
   return comment
 }
 
+function addCode(js) {
+  var e = document.createElement('script')
+  e.type = 'text/javascript'
+  e.src = 'data:text/javascript;charset=utf-8,' + escape(js)
+  document.body.appendChild(e)
+}
+
+function* debugCode(code: string, breakpoints: any) {
+  var splitCode = code.split('\n')
+  splitCode.map((x, index) => {
+    if (typeof breakpoints[index] !== typeof undefined) {
+      splitCode[index] = x + ' debugger;'
+    }
+  })
+
+  code = splitCode.join('\n')
+  addCode(code)
+}
+
 function* evalCode(code: string, context: Context) {
-  const {result, interrupted} = yield race({
+  const { result, interrupted } = yield race({
     result: call(runInContext, code, context),
     interrupted: take(actionTypes.INTERRUPT_EXECUTION)
   })
@@ -76,6 +101,13 @@ function* interpreterSaga(): SagaIterator {
     const code = yield select((state: Shape) => state.editor.value)
     context = createContext(library.week, library.externals)
     yield* evalCode(code, context)
+  })
+
+  yield takeEvery(actionTypes.DEBUG_EDITOR, function*() {
+    const code = yield select((state: Shape) => state.editor.value)
+    const breakpoints = yield select((state: Shape) => state.editor.breakpoints)
+    context = createContext(library.week, library.externals)
+    yield* debugCode(code, breakpoints)
   })
 
   yield takeEvery(actionTypes.SET_LIBRARY_SUCCESS, function*() {

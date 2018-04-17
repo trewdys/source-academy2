@@ -4,7 +4,8 @@ import * as actionTypes from '../actionTypes'
 
 const init: EditorState = {
   value: '',
-  isDirty: false
+  isDirty: false,
+  breakpoints: null
 }
 
 const editorReducer: Reducer<EditorState> = (state = init, action) => {
@@ -14,6 +15,13 @@ const editorReducer: Reducer<EditorState> = (state = init, action) => {
         ...state,
         isDirty: false
       }
+
+    case actionTypes.SET_BREAKPOINTS:
+      return {
+        ...state,
+        breakpoints: action.payload
+      }
+
     case actionTypes.SET_EDITOR_VALUE:
       return {
         ...state,

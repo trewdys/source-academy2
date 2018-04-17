@@ -27,7 +27,13 @@ export const setEditorValue = (code: string) => ({
   payload: code
 })
 
+export const setBreakpoints = (breakpoints: any) => ({
+  type: actionTypes.SET_BREAKPOINTS,
+  payload: breakpoints
+})
+
 export const evalEditor = () => ({ type: actionTypes.EVAL_EDITOR })
+export const debugEditor = () => ({ type: actionTypes.DEBUG_EDITOR })
 
 export const evalInterpreter = (code: string) => ({
   type: actionTypes.EVAL_INTERPRETER,

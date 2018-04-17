@@ -32,6 +32,7 @@ export type Props = {
   setFilename: (to: string) => any
   setLibrary: (to: string) => any
   evalEditor: () => any
+  debugEditor: () => any
   saveEditor: () => any
   interruptExecution: () => any
 }
@@ -58,6 +59,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Shape>) =>
       setLibrary: actions.setLibrary,
       setFilename: actions.setFilename,
       evalEditor: actions.evalEditor,
+      debugEditor: actions.debugEditor,
       saveEditor: actions.saveEditor,
       interruptExecution: actions.interruptExecution
     },
@@ -71,8 +73,7 @@ const getSaveButton = (props: Props) => {
   if (isShown) {
     const intent = isDirty ? Intent.WARNING : Intent.NONE
     return (
-      <Button intent={intent} onClick={saveEditor}
-        iconName="floppy-disk">
+      <Button intent={intent} onClick={saveEditor} iconName="floppy-disk">
         Save
       </Button>
     )
@@ -81,7 +82,7 @@ const getSaveButton = (props: Props) => {
   }
 }
 
-const PlaygroundControl: React.StatelessComponent<Props> = (props) => {
+const PlaygroundControl: React.StatelessComponent<Props> = props => {
   const {
     isPlayground,
     setLayoutType,
@@ -90,6 +91,7 @@ const PlaygroundControl: React.StatelessComponent<Props> = (props) => {
     isReadOnly,
     setFilename,
     evalEditor,
+    debugEditor,
     libraries,
     library,
     nextAction,
@@ -97,13 +99,11 @@ const PlaygroundControl: React.StatelessComponent<Props> = (props) => {
     questionType,
     interruptExecution,
     isExecuting
-    } = props
+  } = props
   let filenameInput
   const isProgramming = questionType === 'programming_question'
 
-  const handleChangeFilename = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeFilename = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setFilename(value)
   }
@@ -125,23 +125,32 @@ const PlaygroundControl: React.StatelessComponent<Props> = (props) => {
   const genericButton = (
     label: string,
     icon: string,
-    handleClick = () => { },
+    handleClick = () => {},
     intent = Intent.NONE,
     notMinimal = false
-  ) =>
-    (<Button
+  ) => (
+    <Button
       onClick={handleClick}
-      className={notMinimal ? "" : "pt-minimal"}
+      className={notMinimal ? '' : 'pt-minimal'}
       intent={intent}
       iconName={icon}
     >
       {label}
     </Button>
-    )
-  const runButton = ((isPlayground || isProgramming) && !isExecuting)
-    && genericButton('Run', 'play', evalEditor)
-  const stopButton = ((isPlayground || isProgramming) && isExecuting)
-    && genericButton('Stop', 'dismiss', interruptExecution, Intent.DANGER, true)
+  )
+
+  const debugButton =
+    (isPlayground || isProgramming) &&
+    !isExecuting &&
+    genericButton('Debug', 'play', debugEditor)
+  const runButton =
+    (isPlayground || isProgramming) &&
+    !isExecuting &&
+    genericButton('Run', 'play', evalEditor)
+  const stopButton =
+    (isPlayground || isProgramming) &&
+    isExecuting &&
+    genericButton('Stop', 'dismiss', interruptExecution, Intent.DANGER, true)
   const saveButton = getSaveButton(props)
   let nextButton = null
   let previousButton = null
@@ -150,27 +159,35 @@ const PlaygroundControl: React.StatelessComponent<Props> = (props) => {
     if (nextAction && /submit/.test(nextAction)) {
       if (isReadOnly) {
         nextButton = (
-          <a className='pt-button pt-icon-tick pt-disabled'
-            href={nextAction}>
+          <a className="pt-button pt-icon-tick pt-disabled" href={nextAction}>
             <span>Submitted</span>
           </a>
         )
       } else {
         nextButton = (
-          <a className='pt-button pt-intent-success pt-icon-send-to' href={nextAction}>
+          <a
+            className="pt-button pt-intent-success pt-icon-send-to"
+            href={nextAction}
+          >
             <span>Submit</span>
           </a>
         )
       }
     } else {
       nextButton = (
-        <a className='pt-button pt-minimal pt-intent-success pt-icon-chevron-right' href={nextAction}>
+        <a
+          className="pt-button pt-minimal pt-intent-success pt-icon-chevron-right"
+          href={nextAction}
+        >
           <span>Next</span>
         </a>
       )
     }
     previousButton = (
-      <a className='pt-button pt-minimal pt-intent-success pt-icon-chevron-left' href={previousAction}>
+      <a
+        className="pt-button pt-minimal pt-intent-success pt-icon-chevron-left"
+        href={previousAction}
+      >
         <span>Previous</span>
       </a>
     )
@@ -183,11 +200,11 @@ const PlaygroundControl: React.StatelessComponent<Props> = (props) => {
   const weekInput = isPlayground && (
     <div className="pt-select">
       <select defaultValue={library} onChange={handleSelectChange}>
-        {libraries.map(name =>
+        {libraries.map(name => (
           <option key={name} value={name}>
             {name}
           </option>
-        )}
+        ))}
       </select>
     </div>
   )
@@ -229,6 +246,7 @@ const PlaygroundControl: React.StatelessComponent<Props> = (props) => {
       </div>
       <div className="tabs pt-navbar-group col-xs end-xs">
         {runButton}
+        {debugButton}
         {stopButton}
         {saveButton}
         {saveButton && <span className="pt-navbar-divider" />}
