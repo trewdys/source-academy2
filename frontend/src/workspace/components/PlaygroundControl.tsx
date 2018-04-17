@@ -142,7 +142,7 @@ const PlaygroundControl: React.StatelessComponent<Props> = props => {
   const debugButton =
     (isPlayground || isProgramming) &&
     !isExecuting &&
-    genericButton('Debug', 'play', debugEditor)
+    genericButton('Debug', 'code-block', debugEditor)
   const runButton =
     (isPlayground || isProgramming) &&
     !isExecuting &&
